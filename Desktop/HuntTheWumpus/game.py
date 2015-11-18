@@ -44,8 +44,38 @@ def main():
    print ('   Pit   :  "I feel a draft!"\n')
 
    #-----------------------------End of the Instruction--------------------------#
+   
+
 
 
 if __name__=='__main__': 
    main()
-   #HowPlayTheGame()
+
+   print ("you are in room number: ")
+   function.ReadInitialRoom()
+
+game = True 
+while game:
+   #Do not allow the user to proceed without giving valid input.
+   while choice != "s" and choice != "m" and choice != "q":
+      choice = (input("\nShoot, move, or quit (s/m/q)? "))
+
+      if choice == "m":    #Move to another room.
+         #will need to check the validity of the choice
+         #will need to figure out how to move
+         pass
+
+      elif choice == "s":  #Shoot an arrow
+         #will need to check the validity of the choice
+         #will need to figure out how to shoot
+         pass
+
+      elif choice == "q":    #Quit
+         game = False
+         break
+
+      else:
+         print("Invalid input, please try again!")
+
+
+  
