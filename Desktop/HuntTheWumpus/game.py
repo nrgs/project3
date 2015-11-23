@@ -51,24 +51,38 @@ def main():
 if __name__=='__main__': 
    main()
 
-   print ("you are in room number: ")
-   function.ReadInitialRoom()
+   gameObjects = [0] * 6   #keeps track of where everything is using index
+                           #index 0 = player, 1 & 2 = pits, 3 & 4 = bats, 5 = wumpus
 
-game = True 
+   function.initPlayerRoom()
+   function.initPits()
+   function.initBats()
+   function.initWumpus()
+
+   print ("you are in room number: ", function.getPlayerRoom(), '\n', sep='')
+
+game = True
 while game:
    #Do not allow the user to proceed without giving valid input.
-   while choice != "s" and choice != "m" and choice != "q":
-      choice = (input("\nShoot, move, or quit (s/m/q)? "))
+   function.printGUIMap()
+   function.printWarning()
 
-      if choice == "m":    #Move to another room.
-         #will need to check the validity of the choice
-         #will need to figure out how to move
-         pass
+   choice = ' '
+
+   while choice != "s" and choice != "m" and choice != "q":
+      if function.checkDeath() == 0: #return 0 if you are not standing on wumpus or in a pit
+         game = False
+         break
+
+      choice = (input("Shoot, move, or quit (s/m/q)? "))
+
+      if choice == "m":
+         function.move()
 
       elif choice == "s":  #Shoot an arrow
          #will need to check the validity of the choice
          #will need to figure out how to shoot
-         pass
+         continue
 
       elif choice == "q":    #Quit
          game = False

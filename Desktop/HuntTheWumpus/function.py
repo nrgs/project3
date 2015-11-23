@@ -29,6 +29,7 @@ for i in range(3):
 	list2 = [11, 12, 13, 14, 15, 16, 17, 18, 19, 20]
 
 print(MapCave)
+
 #----------------------------------End of the Map--------------------#
 
 #Set up initial room and pick random numbers to put Bats, pits and Wumpus
@@ -36,33 +37,115 @@ caveNumbers = list1 + list2 #caveNumbers = [1, 2,...., 20]
 
 caving = []
 
+gameObjects = [0] * 6	#keeps track of where everything is using index
+						#index 0 = player, 1 & 2 = pits, 3 & 4 = bats, 5 = wumpus
+
+#
+
 #put player in one room randomly
-def ReadInitialRoom():
-	initialRoom = random.choice(caveNumbers)
-	print(initialRoom)
+def initPlayerRoom():
+	gameObjects[0] = random.choice(caveNumbers) #changed the name to "playerRoom" - we can reuse this
 	#append to caving list
-	caving.append(initialRoom)
+	caving.append(gameObjects[0])
 	#remove from caveNumbers
-	caveNumbers.remove(initialRoom)
+	caveNumbers.remove(gameObjects[0])
 
-def pits():
+def initPits():
 	#put 2 pits in 2 rooms randomly
-	pit1 = random.choice(caveNumbers)
-	caveNumbers.remove(pit1)
-	pit2 = random.choice(caveNumbers)
-	caveNumbers.remove(pit2)
+	gameObjects[1] = random.choice(caveNumbers)
+	caveNumbers.remove(gameObjects[1])
+	gameObjects[2] = random.choice(caveNumbers)
+	caveNumbers.remove(gameObjects[2])
 
-
-def bats():
+def initBats():
 	#put 2 bats in 2 rooms randomly
-	bat1 = random.choice(caveNumbers)
-	caveNumbers.remove(bat1)
-	bat2 = random.choice(caveNumbers)
-	caveNumbers.remove(bat2)
+	gameObjects[3] = random.choice(caveNumbers)
+	caveNumbers.remove(gameObjects[3])
+	gameObjects[4] = random.choice(caveNumbers)
+	caveNumbers.remove(gameObjects[4])
 
-def Wumpus():
+def initWumpus():
 	#put a wumpus in a room randomly
-	wumpus = random.choice(caveNumbers)
+	gameObjects[5] = random.choice(caveNumbers)
 
+def getPlayerRoom():
+	return gameObjects[0]
 
+def printGUIMap():
+	rooms = [-1] * 3
+	for item in MapCave:
+		if item[0] == gameObjects[0]:
+			for i in range(0, 3):
+				if rooms[i] == -1:
+					rooms[i] = item[1]
+					break
+		if item[1] == gameObjects[0]:
+			for i in range(0, 3):
+				if rooms[i] == -1:
+					rooms[i] = item[0]
+					break
+	print("      -->[", rooms[0], "]\n     |\n[", 
+		 gameObjects[0], "]----->[", 
+		 rooms[1], "]\n     |\n      -->[", 
+		 rooms[2], "]\n",
+		 sep='')
 
+def printWarning():
+	for item in MapCave:
+		if item[0] == gameObjects[0]:
+			if item[1] == gameObjects[1] or item[1] == gameObjects[2]:
+				print("I feel a draft!")
+			elif item[1] == gameObjects[3] or item[1] == gameObjects[4]:
+				print("Bats nearby!")
+			elif item[1] == gameObjects[5]:
+				print("I smell a wumpus!")
+		if item[1] == gameObjects[0]:
+			if item[0] == gameObjects[1] or item[0] == gameObjects[2]:
+				print("I feel a draft!")
+			elif item[0] == gameObjects[3] or item[0] == gameObjects[4]:
+				print("Bats nearby!")
+			elif item[0] == gameObjects[5]:
+				print("I smell a wumpus!")
+
+def move():
+	#the move function
+	choice = (input("\nWhat room would you like to move to? "))
+	for item in MapCave:
+		#Find where the current position of the player is by scanning through
+		#each item in MapCave, and checking item[0] and item[1] indexes. Once
+		#it finds a link to the players current room, it checks to see if the
+		#other index in the MapCave is equal to the choice. If it is, you have
+		#made a successful move. If not, it keeps scanning.
+		if item[0] == gameObjects[0]:
+			if item[1] == int(choice):
+				gameObjects[0] = int(choice)
+				print("\nMoved to room ", getPlayerRoom(), '\n', sep=' ')
+				return None
+		elif item[1] == gameObjects[0]:
+			if item[0] == int(choice):
+				gameObjects[0] = int(choice)
+				print("\nMoved to room ", getPlayerRoom(), '\n', sep=' ')
+				return None
+	#At this point if the function has not returned yet, you have made an invalid
+	#move. Now you will be placed in the first random room that is connected
+	#to the player's room.
+	print("\nThat is not a room adjacent to you. Moving to a random room...")
+	for item in MapCave:
+		if item[0] == gameObjects[0]:
+			gameObjects[0] = item[1]
+		elif item[1] == gameObjects[0]:
+			gameObjects[0] = item[0]
+	print("\nMoved to room ", getPlayerRoom(), '\n', sep=' ')
+
+def checkDeath():
+	#check to see if the player has died. We do this by seeing if
+	#the player's room is the same as either of the pits, or the 
+	#wumpus.
+	if gameObjects[0] == gameObjects[1] or gameObjects[0] == gameObjects[2]:
+		print("You've fallen into a pit!... Better luck next time.")
+		return 0
+	elif gameObjects[0] == gameObjects[5]:
+		print("Oh no! You've been caught by the Wumpus!... Better luck next time.\n")
+		return 0
+	else:
+		return 1
