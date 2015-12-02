@@ -25,7 +25,7 @@ for i in range(3):
 		# else:
 		# 	j = j
 
-	list1 = [1, 2, 3, 4, 5, 6, 7, 8, 9,10]
+	list1 = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
 	list2 = [11, 12, 13, 14, 15, 16, 17, 18, 19, 20]
 
 print(MapCave)
@@ -119,13 +119,32 @@ def move():
 		if item[0] == gameObjects[0]:
 			if item[1] == int(choice):
 				gameObjects[0] = int(choice)
+
+				#if you got in a room with a bat
+				if gameObjects[0] == gameObjects[3] or gameObjects[0] == gameObjects[4]:
+					print("\nOops, you moved in a room with a bat and it grabed you and took you to some other room at random.")
+					currentPos = gameObjects[0]
+					while currentPos == gameObjects[0]:
+						gameObjects[0] = random.choice(caveNumbers)
+				
+
 				print("\nMoved to room ", getPlayerRoom(), '\n', sep=' ')
 				return None
+
 		elif item[1] == gameObjects[0]:
 			if item[0] == int(choice):
 				gameObjects[0] = int(choice)
+
+				#if you got in a room with a bat
+				if gameObjects[0] == gameObjects[3] or gameObjects[0] == gameObjects[4]:
+					print("\nOops, you moved in a room with a bat and it grabed you and took you to some other room at random.")
+					currentPos = gameObjects[0]
+					while currentPos == gameObjects[0]:
+						gameObjects[0] = random.choice(caveNumbers)
+
 				print("\nMoved to room ", getPlayerRoom(), '\n', sep=' ')
 				return None
+
 	#At this point if the function has not returned yet, you have made an invalid
 	#move. Now you will be placed in the first random room that is connected
 	#to the player's room.
