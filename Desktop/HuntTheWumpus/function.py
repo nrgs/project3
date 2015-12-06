@@ -94,18 +94,18 @@ def printWarning():
 	for item in MapCave:
 		if item[0] == gameObjects[0]:
 			if item[1] == gameObjects[1] or item[1] == gameObjects[2]:
-				print("I feel a draft!")
+				print("I feel a draft!\n")
 			elif item[1] == gameObjects[3] or item[1] == gameObjects[4]:
-				print("Bats nearby!")
+				print("Bats nearby!\n")
 			elif item[1] == gameObjects[5]:
-				print("I smell a wumpus!")
+				print("I smell a wumpus!\n")
 		if item[1] == gameObjects[0]:
 			if item[0] == gameObjects[1] or item[0] == gameObjects[2]:
-				print("I feel a draft!")
+				print("I feel a draft!\n")
 			elif item[0] == gameObjects[3] or item[0] == gameObjects[4]:
-				print("Bats nearby!")
+				print("Bats nearby!\n")
 			elif item[0] == gameObjects[5]:
-				print("I smell a wumpus!")
+				print("I smell a wumpus!\n")
 
 def move():
 	#the move function
@@ -161,10 +161,56 @@ def checkDeath():
 	#the player's room is the same as either of the pits, or the 
 	#wumpus.
 	if gameObjects[0] == gameObjects[1] or gameObjects[0] == gameObjects[2]:
-		print("You've fallen into a pit!... Better luck next time.")
+		print("You've fallen into a pit!... Better luck next time.\n")
 		return 0
 	elif gameObjects[0] == gameObjects[5]:
 		print("Oh no! You've been caught by the Wumpus!... Better luck next time.\n")
 		return 0
 	else:
 		return 1
+
+
+def shoot():
+
+	check_validity = True
+	#Check validity, if the input is not an integer
+	while check_validity:
+		try:
+			NOfRooms = int(input("Number of rooms (1-5)? "))
+			check_validity = False	
+
+		except ValueError:
+				print("Oops, invalid input, try again. \n")
+	
+	#Check the validity,if the input is not in range		
+	if NOfRooms not in range (1, 6):	
+		print("Oops, invalid input, try again.\n")
+	
+	else:
+		print("Room number (1-20)? ")
+		enterRoomNo = True
+
+		while enterRoomNo:
+			invalidity = False
+			roomList = []
+			for room in range (0, NOfRooms):
+				roomList.append(input("Room No? "))
+		
+			#Check whter the item is not a digit or out of range
+			for item in roomList:
+				if item. isdigit() == False or int(item) > 20 or int(item) < 1:
+					invalidity = True
+	
+			if invalidity == True:
+				print("invalid input, try again! \n")
+			else:	
+				enterRoomNo = False
+
+		print("\nNow validity is done, should figure out if the rooms or related or not!")		
+
+
+				
+
+			
+					
+		

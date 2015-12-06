@@ -75,14 +75,16 @@ while game:
          break
 
       choice = (input("Shoot, move, or quit (s/m/q)? "))
+     
 
       if choice == "m":
          function.move()
 
       elif choice == "s":  #Shoot an arrow
+         function.shoot()
          #will need to check the validity of the choice
          #will need to figure out how to shoot
-         continue
+         #continue
 
       elif choice == "q":    #Quit
          game = False
