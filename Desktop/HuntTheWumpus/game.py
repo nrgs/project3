@@ -81,7 +81,9 @@ while game:
          function.move()
 
       elif choice == "s":  #Shoot an arrow
-         function.shoot()
+         if (function.shoot() == True):
+            game = False
+            break
          #will need to check the validity of the choice
          #will need to figure out how to shoot
          #continue

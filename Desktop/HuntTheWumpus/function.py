@@ -44,6 +44,7 @@ gameObjects = [0] * 6	#keeps track of where everything is using index
 
 #put player in one room randomly
 def initPlayerRoom():
+	print(MapCave)
 	gameObjects[0] = random.choice(caveNumbers) #changed the name to "playerRoom" - we can reuse this
 	#append to caving list
 	caving.append(gameObjects[0])
@@ -70,6 +71,25 @@ def initWumpus():
 
 def getPlayerRoom():
 	return gameObjects[0]
+
+def isAdjacent(room0, room1):
+	for item in MapCave:
+		if item[0] == room0 and item[1] == room1:
+			return True
+		elif item[0] == room1 and item[1] == room0:
+			return True
+	return False
+
+def fire(room):
+	if int(room) == gameObjects[0]:
+		print("\n\tYou have shot yourself. Ouch.\n")
+		return True
+	elif int(room) == gameObjects[5]:
+		print("\n\tYou shot the Wumpus!!!\n")
+		return True
+	else:
+		print("\n\tUnfortunatly, you missed the Wumpus.\n")
+	return False
 
 def printGUIMap():
 	rooms = [-1] * 3
@@ -205,12 +225,31 @@ def shoot():
 				print("invalid input, try again! \n")
 			else:	
 				enterRoomNo = False
+				roomList = [int(i) for i in roomList]
 
-		print("\nNow validity is done, should figure out if the rooms or related or not!")		
+		#This is to check whether or not the shot is valid
+		validShot = True
+		roomList.insert(0, gameObjects[0])
+		while len(roomList) > 1:
+			if isAdjacent(roomList[0], roomList[1]):
+				roomList.pop(0)
+			else:
+				validShot = False
+				break
 
+		gameOver = False
+		if validShot:
+			gameOver = fire(roomList[0]);
+		else:
+			randList = []
+			for item in MapCave:
+				if item[0] == roomList[0]:
+					randList.append(item[1])
+				elif item[1] == roomList[0]:
+					randList.append(item[0])
+			gameOver = fire(random.choice(randList))
 
-				
+		return gameOver
 
-			
 					
 		
