@@ -12,17 +12,34 @@ import random
 from random import choice
 import os
 
+def printLoopGUIMap():
+	rooms = [-1] * 3
+	for item in MapCave:
+		if item[0] == gameObjects[0]:
+			for i in range(0, 3):
+				if rooms[i] == -1:
+					rooms[i] = item[1]
+					break
+		if item[1] == gameObjects[0]:
+			for i in range(0, 3):
+				if rooms[i] == -1:
+					rooms[i] = item[0]
+					break
+	print("<p>----------->[", rooms[0], "]</p>")
+	print("<p>[", gameObjects[0], "]----->[", rooms[1], "]</p>")
+	print("<p>----------->[", rooms[2], "]</p>")
+
 def move(room):
 	list1 = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20]
 	#the move function
 	for item in MapCave:
+		#print("Item 0:", item[0], "Item 1:", item[1], "GameObject: ", gameObjects[0])
 		#Find where the current position of the player is by scanning through
 		#each item in MapCave, and checking item[0] and item[1] indexes. Once
 		#it finds a link to the players current room, it checks to see if the
 		#other index in the MapCave is equal to the choice. If it is, you have
 		#made a successful move. If not, it keeps scanning.
 		if int(item[0]) == gameObjects[0]:
-			print(item[1], " ", room, "\n")
 			if int(item[1]) == int(room):
 				gameObjects[0] = int(room)
 
@@ -81,8 +98,6 @@ print('<html><body>')
 
 if (selection == "m"):
 	room = int(form.getvalue('Rooms'))
-	print("room:", room)
-	print()
 	move(room)
 if (selection == "s"):
 	roomList = []
@@ -91,11 +106,11 @@ if (selection == "s"):
 		roomList.append(int(item))
 		function.shoot(MapCave, gameObjects, roomList)
 
-function.printLoopGUIMap(MapCave, gameObjects)
+printLoopGUIMap()
 function.printLoopWarning(MapCave, gameObjects)
 cookie["Cave"] = repr(MapCave)
 cookie["GameObjects"] = repr(gameObjects)
-print(gameObjects)
+#print(cookie)
 
 print("""
    <br/>
