@@ -29,7 +29,7 @@ def printLoopGUIMap():
 	print("<p>[", gameObjects[0], "]----->[", rooms[1], "]</p>")
 	print("<p>----------->[", rooms[2], "]</p>")
 
-def move(room):
+def move(room, output):
 	list1 = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20]
 	#the move function
 	for item in MapCave:
@@ -45,14 +45,14 @@ def move(room):
 
 				#if you got in a room with a bat
 				if gameObjects[0] == gameObjects[3] or gameObjects[0] == gameObjects[4]:
-					print("\nOops, you moved in a room with a bat and it grabed you and took you to some other room at random.")
+					output += "\nOops, you moved in a room with a bat and it grabed you and took you to some other room at random."
 					currentPos = gameObjects[0]
 					while currentPos == gameObjects[0]:
 						gameObjects[0] = random.choice(list1)
 				
 
-				print("\nMoved to room ", gameObjects[0], '\n', sep=' ')
-				return None
+				output += "\nMoved to room " + str(gameObjects[0]) + "\n"
+				return output
 
 		elif int(item[1]) == gameObjects[0]:
 			if int(item[0]) == int(room):
@@ -60,22 +60,23 @@ def move(room):
 
 				#if you got in a room with a bat
 				if gameObjects[0] == gameObjects[3] or gameObjects[0] == gameObjects[4]:
-					print("\nOops, you moved in a room with a bat and it grabed you and took you to some other room at random.")
+					output += "\nOops, you moved in a room with a bat and it grabed you and took you to some other room at random."
 					currentPos = gameObjects[0]
 					while currentPos == gameObjects[0]:
 						gameObjects[0] = random.choice(list1)
 
-				print("\nMoved to room ", gameObjects[0], '\n', sep=' ')
-				return None
+				output += "\nMoved to room " + str(gameObjects[0]) + "\n"
+				return output
 
 	#At this point if the function has not returned yet, you have made an invalid
 	#move. Now you will be placed in the first random room that is connected
 	#to the player's room.
-	print("\nThat is not a room adjacent to you. Moving to a random room...")
+	output += "\nThat is not a room adjacent to you. Moving to a random room..."
 	currentPos = gameObjects[0]
 	while currentPos == gameObjects[0]:
 		gameObjects[0] = random.choice(list1)
-	print("\nMoved to room ", gameObjects[0], '\n', sep=' ')
+	output += "\nMoved to room " + str(gameObjects[0]) + "\n"
+	return output
 
 cookie_string = os.environ.get('HTTP_COOKIE')
 form = cgi.FieldStorage()
@@ -90,15 +91,12 @@ else:
     cookie.load(cookie_string)
     MapCave = eval(cookie['Cave'].value)
     gameObjects = eval(cookie['GameObjects'].value)
-    gameObjects = [int(i) for i in gameObjects]
 
-print('Content-Type: text/html')
-print()
-print('<html><body>')
-
+print(cookie)
+output = ""
 if (selection == "m"):
 	room = int(form.getvalue('Rooms'))
-	move(room)
+	output = move(room, output)
 if (selection == "s"):
 	roomList = []
 	roomNumbers = form.getvalue('Rooms')
@@ -106,12 +104,15 @@ if (selection == "s"):
 		roomList.append(int(item))
 		function.shoot(MapCave, gameObjects, roomList)
 
-printLoopGUIMap()
-function.printLoopWarning(MapCave, gameObjects)
 cookie["Cave"] = repr(MapCave)
 cookie["GameObjects"] = repr(gameObjects)
-#print(cookie)
-
+print(cookie)
+print('Content-Type: text/html')
+print()
+print('<html><body>')
+print(output)
+printLoopGUIMap()
+function.printLoopWarning(MapCave, gameObjects)
 print("""
    <br/>
    <form method="get" action="/cgi-bin/loop.py">

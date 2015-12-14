@@ -71,10 +71,6 @@ def initBats():
 def initWumpus():
 	#put a wumpus in a room randomly
 	gameObjects[5] = random.choice(list1)
-	
-def initCookie(cookie):
-	cookie["Cave"] = repr(MapCave)
-	cookie["GameObjects"] = repr(gameObjects)
 
 def printWarning():
 	for item in MapCave:
@@ -100,11 +96,15 @@ initPlayerRoom()
 initPits()
 initBats()
 initWumpus()
-initCookie(cookie)
-
+cookie['Cave'] = repr(MapCave)
+cookie['GameObjects'] = repr(gameObjects)
+print(cookie)
 print('Content-Type: text/html')
 print() 
 print('<html><body>')
+#print(gameObjects[0])
+print(cookie['GameObjects'])
+print("<br />")
 printGUIMap()
 printWarning()
 #function.printGameObject()
