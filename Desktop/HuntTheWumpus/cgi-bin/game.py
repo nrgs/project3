@@ -13,6 +13,7 @@ from random import choice
 
 caving = []
 MapCave = []
+Arrows = [5]
 listSize = 20
 list1 = [1, 2, 3,4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20]
 gameObjects = [0] * 6	#keeps track of where everything is using index
@@ -89,6 +90,7 @@ def printWarning():
 			elif item[0] == gameObjects[5]:
 				print("I smell a wumpus!\n")
 
+
 cookie = http.cookies.SimpleCookie()
 
 cave()                       
@@ -98,12 +100,13 @@ initBats()
 initWumpus()
 cookie['Cave'] = repr(MapCave)
 cookie['GameObjects'] = repr(gameObjects)
+cookie['Arrows'] = repr(Arrows)
 print(cookie)
 print('Content-Type: text/html')
 print() 
 print('<html><body>')
 #print(gameObjects[0])
-print(cookie['GameObjects'])
+#print(cookie['GameObjects'])
 print("<br />")
 printGUIMap()
 printWarning()

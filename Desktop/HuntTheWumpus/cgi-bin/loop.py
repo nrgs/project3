@@ -78,10 +78,56 @@ def move(room, output):
 	output += "\nMoved to room " + str(gameObjects[0]) + "\n"
 	return output
 
+def fire(room, gameObjects):
+	#Arrows[0] -= 1
+	if int(room) == gameObjects[5]:
+		return True
+	else:
+		gameObjects[5] = room
+	return False
+
+def shoot(MapCave, roomList, gameObjects):
+		#This is to check whether or not the shot is valid
+		validShot = True
+		roomList.insert(0, gameObjects[5])
+		
+		#check if the shot is valid
+		for item in MapCave:
+			if(len(roomList) != 1):
+				if roomList[0] == item[0] and roomList[1] == item[1]:
+						roomList.pop(0)			
+				elif roomList[0] == item[1] and roomList[1] == item[0]:
+						roomList.pop(0)
+
+		#check if the shot is not valid
+		if(len(roomList) > 1):
+			validShot = False
+
+
+		gameOver = False
+		#if the shot is valid, fire to the correct room
+		if validShot:
+			gameOver = fire(roomList[0], gameObjects)
+		else:
+			# if the shot is not valid, wumpus will move to one of the adjacent room
+			adjacentList = []
+			for item in MapCave:
+				if item[0] == gameObjects[0]:
+					adjacentList.append(item[1])
+				elif item[1] == gameObjects[0]:
+					adjacentList.append(item[0])
+			
+			gameOver = fire(random.choice(adjacentList), gameObjects)
+
+		#return game over = true if you shot the wumpus
+		return gameOver
+
 cookie_string = os.environ.get('HTTP_COOKIE')
 form = cgi.FieldStorage()
 gameObjects = []
 MapCave = []
+Arrows = []
+GameOver = False
 selection = form.getvalue('Selection')
 
 if cookie_string == '':
@@ -91,6 +137,7 @@ else:
     cookie.load(cookie_string)
     MapCave = eval(cookie['Cave'].value)
     gameObjects = eval(cookie['GameObjects'].value)
+    Arrows = eval(cookie['Arrows'].value)
 
 print(cookie)
 output = ""
@@ -98,27 +145,50 @@ if (selection == "m"):
 	room = int(form.getvalue('Rooms'))
 	output = move(room, output)
 if (selection == "s"):
-	roomList = []
-	roomNumbers = form.getvalue('Rooms')
-	for item in roomNumbers.split():
-		roomList.append(int(item))
-		function.shoot(MapCave, gameObjects, roomList)
+	shotsFired = []
+	roomList = form.getvalue('Rooms')
+	for item in roomList.split():
+		shotsFired.append(int(item))
+	if len(shotsFired) < 5 and len(shotsFired) > 0:
+		if shoot(MapCave, shotsFired, gameObjects) == True:
+			GameOver = True
+			output += "You shot the wumpus!"
+		else:
+			Arrows[0] -= 1
+			if Arrows[0] == 0:
+				GameOver = True
+				output += "You ran out of arrows."
+			else:
+				output += "Unfortunately you missed the wumpus!\n"
+				output += "Your remaining arrows are now: " + str(Arrows[0]) + "\n"
+				output += "Hazard! Wumpus is in one of the adjacent rooms now!\n"
+
 
 cookie["Cave"] = repr(MapCave)
 cookie["GameObjects"] = repr(gameObjects)
+cookie["Arrows"] = repr(Arrows)
 print(cookie)
 print('Content-Type: text/html')
 print()
 print('<html><body>')
 print(output)
-printLoopGUIMap()
-function.printLoopWarning(MapCave, gameObjects)
-print("""
-   <br/>
-   <form method="get" action="/cgi-bin/loop.py">
-	What would you like to do? (m/s): <input type="text" name="Selection">
-		<br/>Enter the room to move to, or list of rooms to shoot to. <input type="text" name = "Rooms"> 
-		<input type="submit" value="Go!">
-    </form> 
-""")
-print('</body></html>')
+if GameOver == False:
+	printLoopGUIMap()
+	function.printLoopWarning(MapCave, gameObjects)
+	print("""
+	   <br/>
+	   <form method="get" action="/cgi-bin/loop.py">
+		What would you like to do? (m/s): <input type="text" name="Selection">
+			<br/>Enter the room to move to, or list of rooms to shoot to. <input type="text" name = "Rooms"> 
+			<input type="submit" value="Go!">
+	    </form> 
+	""")
+	print('</body></html>')
+else:
+	print("""
+	   <br/>
+	   <form method="get" action="/cgi-bin/game.py">
+		Let's Play Again!: <input type="submit" value="Go!">
+	    </form> 
+	""")
+	print('</body></html>')
